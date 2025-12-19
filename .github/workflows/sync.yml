@@ -1,0 +1,23 @@
+name: Load Spurgeon Data
+on: 
+  workflow_dispatch: # This adds a "Play" button so you can run it manually!
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: benevolence/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install tools
+        run: pip install -r requirements.txt
+
+      - name: Run Librarian Script
+        env:
+          PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+        run: python load_data.py
