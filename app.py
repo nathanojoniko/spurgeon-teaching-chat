@@ -7,17 +7,13 @@ from groq import Groq
 # --- 1. SETUP & INITIALIZATION ---
 st.set_page_config(page_title="Spurgeon Research Bot", page_icon="📚")
 
-# Sidebar with Refresh Button
 with st.sidebar:
     st.title("Settings")
     if st.button("Clear Chat / Refresh"):
         st.session_state.messages = []
         st.rerun()
 
-st.title("📚 Spurgeon Sermon Archive")
-st.subheader("Summary & Reference Tool")
-
-# Initialize APIs (Ensure these match your Secrets names)
+# Initialize APIs
 PINECONE_KEY = st.secrets["PINECONE_API_KEY"]
 GROQ_KEY = st.secrets["GROQ_API_KEY"]
 INDEX_NAME = "spurgeon-teaching-chat"
@@ -32,15 +28,32 @@ def search_spurgeon(query):
     results = index.query(vector=query_vector, top_k=4, include_metadata=True)
     
     context = ""
-    sources = []
-    for res in results['matches']:
-        # Extract metadata
-        src_name = res['metadata'].get('source', 'Unknown Sermon')
-        txt_body = res['metadata'].get('text', '')
-        context += f"\n--- DOCUMENT: {src_name} ---\n{txt_body}\n"
-        sources.append(src_name)
+    source_details = []
     
-    return context, list(set(sources))
+    for res in results['matches']:
+        # Example metadata source format: "volume-1 - sermon-001.md"
+        source_id = res['metadata'].get('source', '') 
+        raw_text = res['metadata'].get('text', '')
+        
+        # 1. Construct the Link to the original lyteword repo
+        # Format: https://github.com/lyteword/chspurgeon-sermons/blob/main/[path]
+        clean_path = source_id.replace("Spurgeon ", "").strip()
+        encoded_path = clean_path.replace(" ", "%20")
+        github_url = f"https://github.com/lyteword/chspurgeon-sermons/blob/main/{encoded_path}"
+        
+        # 2. Get a "Pretty Title" 
+        # Since we don't have the header in every chunk, we'll clean the filename
+        # "volume-1 - sermon-001.md" -> "Sermon 001 (Volume 1)"
+        display_name = clean_path.replace(".md", "").replace("-", " ").title()
+
+        context += f"\n--- SOURCE: {display_name} ---\n{raw_text}\n"
+        
+        source_details.append({
+            "title": display_name,
+            "url": github_url
+        })
+    
+    return context, source_details
 
 # --- 2. THE CHAT UI ---
 if "messages" not in st.session_state:
@@ -56,18 +69,16 @@ if prompt := st.chat_input("Ask about a topic..."):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        context, sources = search_spurgeon(prompt)
+        context, source_list = search_spurgeon(prompt)
         
-        # STRICT SYSTEM PROMPT
         system_instruction = (
-            "You are a helpful research assistant for the sermons of C.H. Spurgeon. "
-            "Your goal is to provide a modern summary based ONLY on the provided documents. "
+            "You are a research assistant for C.H. Spurgeon's sermons. "
             "STRICT RULES:\n"
-            "1. Use clear, modern English. Do NOT mimic a Victorian style.\n"
-            "2. ONLY use the 'CONTEXT FROM SERMONS' provided below. If it is not there, say you don't know.\n"
-            "3. DO NOT add your own scriptures or general knowledge (e.g., do not add Philippians 4:6 unless it is in the text).\n"
-            "4. At the very end of your response, list the 'Sermons Referenced' clearly.\n"
-            f"\n\nCONTEXT FROM SERMONS:\n{context}"
+            "1. Answer ONLY using the provided context. No outside knowledge.\n"
+            "2. Use modern English. No Victorian style.\n"
+            "3. Reference the specific Volume or Sermon number within your answer when possible.\n"
+            "4. Do NOT provide the final list of links; the app handles that."
+            f"\n\nCONTEXT:\n{context}"
         )
 
         response = groq_client.chat.completions.create(
@@ -78,7 +89,18 @@ if prompt := st.chat_input("Ask about a topic..."):
             ]
         )
         
-        full_response = response.choices[0].message.content
-        st.markdown(full_response)
+        answer = response.choices[0].message.content
+        st.markdown(answer)
+        
+        # --- REFERENCE SECTION ---
+        st.markdown("---")
+        st.markdown("### 📖 Original Sermon Files")
+        
+        # Deduplicate and display
+        seen_urls = set()
+        for source in source_list:
+            if source['url'] not in seen_urls:
+                st.markdown(f"🔗 [Read {source['title']}]({source['url']})")
+                seen_urls.add(source['url'])
 
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+    st.session_state.messages.append({"role": "assistant", "content": answer})
