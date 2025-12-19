@@ -1,5 +1,5 @@
 requests
-pinecone-client
+pinecone
 sentence-transformers
 streamlit
 groq
