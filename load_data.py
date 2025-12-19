@@ -57,7 +57,7 @@ for vol in volume_folders[:5]: # Look at first 5 volumes
                     "id": f"{vol_name}_{s_name.replace('.md', '')}_{i}",
                     "values": vector,
                     "metadata": {
-                        "text": clean_text[:1000],
+                        "text": clean_text[:3000],
                         "source": f"Spurgeon {vol_name} - {s_name}"
                     }
                 })
