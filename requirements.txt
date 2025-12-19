@@ -1,3 +1,5 @@
 requests
-pinecone
+pinecone-client
 sentence-transformers
+streamlit
+groq
