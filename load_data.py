@@ -7,7 +7,7 @@ from sentence_transformers import SentenceTransformer
 # --- 1. SETUP & AUTHENTICATION ---
 PINECONE_KEY = os.getenv("PINECONE_API_KEY")
 # Create a secret/env variable for this on your machine or GitHub Actions
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN") 
+GITHUB_TOKEN = os.getenv("GH_ACCESS_TOKEN") 
 
 INDEX_NAME = "spurgeon-teaching-chat"
 pc = Pinecone(api_key=PINECONE_KEY)
@@ -15,7 +15,7 @@ index = pc.Index(INDEX_NAME)
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Headers for GitHub API to avoid rate limiting
-headers = {"Authorization": f"token {GITHUB_TOKEN}"} if GITHUB_TOKEN else {}
+headers = {"Authorization": f"token {GH_ACCESS_TOKEN}"} if GH_ACCESS_TOKEN else {}
 
 REPO_API_URL = "https://api.github.com/repos/lyteword/chspurgeon-sermons/contents/"
 
