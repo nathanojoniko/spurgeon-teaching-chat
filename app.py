@@ -10,7 +10,7 @@ st.set_page_config(page_title="Spurgeon Research Bot", page_icon="📚")
 # Sidebar for controls
 with st.sidebar:
     st.title("Settings")
-    st.info("This bot searches the first 5 volumes of Spurgeon's sermons to provide factual summaries.")
+    st.info("This bot searches the first 5 volumes of Spurgeon's sermons to provide factual summaries and references.")
     if st.button("Clear Chat / Refresh"):
         st.session_state.messages = []
         st.rerun()
