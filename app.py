@@ -99,7 +99,9 @@ if prompt := st.chat_input("Ask a question about Spurgeon's teaching..."):
             "4. Do NOT cite volume or sermon numbers inside your summary text.\n"
             "5. Do NOT provide the final list of links or a bibliography; the app handles that."
             "6. Use bullet points where necessary to make text readable."
-            "7. Do not give adjacent content from the dataset if what is being asked is not present in dataset."
+            "7. REFUSAL RULE: If the answer is not in the context, your ENTIRE response must ONLY be: "
+            "'Based on the data I have on Spurgeon's sermons, there is no information available regarding [TOPIC].'\n"
+            "8. ABSOLUTELY NO FILLER: Do not explain what the context *does* contain or why the information is missing."
             f"\n\nCONTEXT FROM SERMONS:\n{context}"
         )
 
