@@ -95,7 +95,7 @@ if prompt := st.chat_input("Ask a question about Spurgeon's teaching..."):
             "STRICT RULES:\n"
             "1. Answer ONLY using the provided context. Do NOT use outside knowledge.\n"
             "2. Use clear, modern English. Do NOT mimic Victorian style.\n"
-            "3. Start your response EXACTLY with the phrase: 'According to the data I have on Spurgeon's sermons...'\n"
+            "3. Start your response EXACTLY with the phrase: 'Based on the data I have on Spurgeon's sermons...'\n"
             "4. Do NOT cite volume or sermon numbers inside your summary text.\n"
             "5. Do NOT provide the final list of links or a bibliography; the app handles that."
             f"\n\nCONTEXT FROM SERMONS:\n{context}"
