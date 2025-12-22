@@ -118,16 +118,24 @@ if prompt := st.chat_input("Ask a question about Spurgeon's teaching..."):
         st.markdown(answer)
         
         # --- REFERENCE SECTION ---
-        if source_list:
-            st.markdown("---")
-            st.write("Below are the sermons I referenced in giving this summary. Please read them to get more information on his teaching regarding this subject:")
-            
-            # Deduplicate links in case multiple chunks came from the same sermon
-            seen_urls = set()
-            for source in source_list:
-                if source['url'] not in seen_urls:
-                    st.markdown(f"🔗 [Read {source['title']}]({source['url']})")
-                    seen_urls.add(source['url'])
+        # Define the refusal phrase to check against
+        refusal_phrase = "no information available"
+
+        # ONLY show references if the LLM actually found information
+        if refusal_phrase.lower() not in answer.lower():
+            if source_list:
+                st.markdown("---")
+                st.write("Below are the sermons I referenced in giving this summary. Please read them to get more information on his teaching regarding this subject:")
+                
+                # Deduplicate links in case multiple chunks came from the same sermon
+                seen_urls = set()
+                for source in source_list:
+                    if source['url'] not in seen_urls:
+                        st.markdown(f"🔗 [Read {source['title']}]({source['url']})")
+                        seen_urls.add(source['url'])
+        else:
+            # Optional: Add a subtle helpful hint when refusing
+            st.info("💡 Try a different topic or keyword (e.g., 'Faith', 'Grace', or 'The Holy Spirit').")
 
     # Save assistant response to state
     st.session_state.messages.append({"role": "assistant", "content": answer})
