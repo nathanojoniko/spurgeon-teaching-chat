@@ -2,7 +2,7 @@
 The goal of this is to make a RAG chat agent that can summarize what Charle's Spurgeon taught in response to particular questions and tell the questioner what sermons they can refer to.
 
 ## ⚖️ Scope of Knowledge
-The AI's knowledge base is strictly limited to the first five volumes of the *New Park Street Pulpit*.
+The AI's knowledge base at this point is limited to the first five volumes of the *New Park Street Pulpit*.
 
 * **Dataset:** Volumes 1, 2, 3, 4, and 5.
 * **Sermon Range:** #1 through #285.
