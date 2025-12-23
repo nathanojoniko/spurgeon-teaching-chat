@@ -5,6 +5,7 @@ The goal of this is to make a RAG chat agent that can summarize what Charle's Sp
 The AI's knowledge base at this point is limited to the first five volumes of the *New Park Street Pulpit*.
 
 * **Dataset:** Volumes 1, 2, 3, 4, and 5.
+* **Primary Datasource: ** https://github.com/lyteword/chspurgeon-sermons/tree/main
 * **Sermon Range:** #1 through #285.
 * **Historical Window:** 1855 – 1859.
 * **Context:** This represents Spurgeon's early ministry in London before the construction of the Metropolitan Tabernacle.
